@@ -15,7 +15,7 @@ print:
 		popa
 		ret
 
-printl:
+print_nl:
 	pusha
 	mov ah,0x0e
 	mov al,0x0a
