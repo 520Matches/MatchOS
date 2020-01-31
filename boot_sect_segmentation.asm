@@ -4,7 +4,7 @@ mov al,[the_secret]
 
 int 0x10
 
-mov bx,0x7c00
+mov bx,0x7c0
 mov ds,bx
 mov al,[the_secret]
 int 0x10
