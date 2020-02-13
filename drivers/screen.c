@@ -1,6 +1,7 @@
 #include "screen.h"
-#include "ports.h"
-#include "../kernel/util.h"
+#include "../cpu/ports.h"
+#include "../libc/string.h"
+#include "../libc/mem.h"
 
 static int get_cursor_offset();
 static void set_cursor_offset(int offset);
@@ -35,6 +36,14 @@ void kprint_at(char *message,int col,int row)
 void kprint(char *message)
 {
 	kprint_at(message,-1,-1);
+}
+
+void kprint_backspace()
+{
+	int offset = get_cursor_offset() - 2;
+	int row = get_offset_row(offset);
+	int col = get_offset_col(offset);
+	print_char(0x08,col,row,WHITE_ON_BLACK);
 }
 
 static int print_char(char c,int col,int row,char attr)
@@ -79,9 +88,9 @@ static int print_char(char c,int col,int row,char attr)
 		int i;
 		for(i = 1;i < MAX_ROWS;i++)
 		{
-			memory_copy(get_offset(0,i) + VIDEO_ADDRESS,get_offset(0,i-1) + VIDEO_ADDRESS,MAX_COLS * 2);
+			memory_copy((u8*)get_offset(0,i) + VIDEO_ADDRESS,(u8*)get_offset(0,i-1) + VIDEO_ADDRESS,MAX_COLS * 2);
 		}
-		char *last_line = get_offset(0,MAX_ROWS - 1) + VIDEO_ADDRESS;
+		char *last_line = (char*)(get_offset(0,MAX_ROWS - 1) + (u8*)VIDEO_ADDRESS);
 		for(i=0;i<MAX_COLS * 2;i++)
 		{
 			last_line[i] = 0;
@@ -115,7 +124,7 @@ void clear_screen()
 {
 	int screen_size = MAX_COLS * MAX_ROWS;
 	int i;
-	char *screen = VIDEO_ADDRESS;
+	char *screen = (char*)VIDEO_ADDRESS;
 
 	for(i = 0;i<screen_size;i++)
 	{

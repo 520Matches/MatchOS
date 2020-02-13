@@ -10,7 +10,8 @@ OBJ = ${C_SOURCES:.c=.o cpu/interrupt.o}
 CC = /opt/Cross/bin/i686-elf-gcc
 GDB = /opt/Cross/bin/i686-elf-gdb
 
-CFLAGS = -g
+CFLAGS = -g -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs \
+          -Wall -Wextra -Werror
 
 os-image.bin: boot/bootsect.bin kernel.bin
 	cat $^ > os-image.bin
